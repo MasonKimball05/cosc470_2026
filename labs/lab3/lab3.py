@@ -35,14 +35,23 @@ print("Training data (this is what makes it SUPERVISED learning:")
 print("every row has an input AND the correct answer/label):\n")
 print(data)
 
+# Swap in the Iris dataset (replaces the tennis data above)
+from sklearn.datasets import load_iris
+iris = load_iris()
+data = pd.DataFrame(
+    iris.data,
+    columns=iris.feature_names
+)
+data["species"] = iris.target_names[iris.target]
+
 # -----------------------------------------------------------------
 # 2. TODO #1: Separate inputs (features) from the label (target)
 # -----------------------------------------------------------------
 # The model needs to learn a function: features -> label
 # X = the columns the model is allowed to look at
 # y = the column it's trying to predict
-X = data.drop(columns=["play_tennis"])   # TODO: is this right? check it.
-y = data["play_tennis"]                  # TODO: is this right? check it.
+X = data.drop(columns=["species"])   # features only: the 4 measurements
+y = data["species"]                  # label: the species we want to predict
 
 # Decision trees in sklearn need numbers, not text, so we encode.
 encoder = OrdinalEncoder()
@@ -76,17 +85,17 @@ print("\nSaved a picture of the tree to tennis_tree.png")
 # -----------------------------------------------------------------
 # This is the payoff of supervised learning: generalizing to new,
 # unlabeled examples using the pattern learned from labeled ones.
-new_day = pd.DataFrame({
-    "outlook": ["sunny"],
-    "temperature": ["cool"],
-    "humidity": ["normal"],
-    "windy": [True],
+new_flower = pd.DataFrame({
+    "sepal length (cm)": [6],
+    "sepal width (cm)": [3],
+    "petal length (cm)": [5],
+    "petal width (cm)": [2],
 })
-new_day_encoded = encoder.transform(new_day)
-prediction = clf.predict(new_day_encoded)   # TODO: predict on new_day_encoded
+new_flower_encoded = encoder.transform(new_flower)
+prediction = clf.predict(new_flower_encoded)
 
-print(f"\nNew day: {new_day.to_dict(orient='records')[0]}")
-print(f"Prediction: play_tennis = {prediction[0]}")
+print(f"\nNew flower: {new_flower.to_dict(orient='records')[0]}")
+print(f"Prediction: species = {prediction[0]}")
 
 # -----------------------------------------------------------------
 # 6. STRETCH GOAL (if time remains)
